@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="VAIC: Vision-Guided Humanoid Agile Object Interaction Control via Decoupled Commands">
+  <meta name="keywords" content="Humanoid, Whole-body Control, Agile Interaction, Vision Guided Control">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    VAIC: Vision-Guided Humanoid Agile Object Interaction Control via Decoupled Commands
+  </title>
+
+  <link rel="icon" href="./static/images/skateboarding_icon.png">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZ38WT2YPD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-QZ38WT2YPD');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://kit.fontawesome.com/19914a84eb.js" crossorigin="anonymous"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <meta property="og:image" content="./static/images/teaser.png" />
+  <meta property="og:image:secure" content="./static/images/teaser.png" />
+</head>
+
+<section class="hero is-link is-fullheight video" style="overflow: hidden; position:relative;">
+  <div class="hero-video" style="height: 100%; width: 177.77777778vh; min-width: 100%;min-height: 56.25vw;">
+    <video playsinline autoplay muted loop>
+      <source src="./static/videos/top.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-video is-hidden-tablet is-inline-block-mobile"
+    style="height: 154.28571428vw; width: 100%; min-width:64.81481481vh;min-height:100%;">
+    <video playsinline autoplay muted loop>
+      <source src="./static/videos/top.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="overlay"></div>
+  <!-- Top-right corner buttons -->
+  <div style="position: absolute; top: 10px; right: 20px; z-index: 100;">
+    <div class="publication-links" style="display: flex; gap: 10px;">
+      <span class="link-block">
+        <a href="./static/vaic.pdf" class="external-link button is-normal is-rounded is-dark" style="font-size: 1.2rem;">
+          <span class="icon">
+            <img src="./static/images/pdf.svg" alt="PDF" />
+          </span>
+          <span>Paper</span>
+        </a>
+      </span>
+    </div>
+  </div>
+  <!-- Hero content: will be in the middle -->
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title is-1 publication-title is-size-1-mobile" style="font-size: 6rem;">
+        <span style="color: #ff9900;">VAIC</span>
+      </h1>
+      <h1 class="subtitle is-1 publication-title is-size-4-mobile" style="font-size: 4rem;">
+      <span style="color: #ff9900;">V</span>ision-Guided Humanoid 
+      <span style="color: #ff9900;">A</span>gile Object 
+      <span style="color: #ff9900;">I</span>nteraction 
+      <span style="color: #ff9900;">C</span>ontrol via Decoupled Commands
+      </h1>
+      <div class="is-size-4 publication-authors" style="margin-top: 10px; color: #ffffff;">
+        <!-- Anonymous Author(s) -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Hero footer: will stick at the bottom -->
+  <!-- <div class="hero-foot is-hidden-mobile">
+    <nav class="tabs is-boxed is-fullwidth is-size-4">
+      <ul>
+        <li><a href="#agile-skills">Agile Whole-Body Skills</a></li>
+        <li><a href="#before-after-asap"></a>Before/After ASAP Fine-tuning</a></li>
+        <li><a href="#abstract">Abstract</a></li>
+        <li><a href="#method">Method</a></li>
+      </ul>
+    </nav>
+  </div> -->
+</section>
+
+
+<section class="hero">
+  <div class="toc">
+    <h3>Content</h3>
+    <hr>
+    <ul>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#box-interaction">Box Interaction</a></li>
+        <li class="toc-subsection"><a href="#box-pick-place">Box Pick and Place</a></li>
+        <li class="toc-subsection"><a href="#box-cross-slope">Cross Slope</a></li>
+        <li class="toc-subsection"><a href="#box-find">Find a Box</a></li>
+      <li><a href="#cart-interaction">Cart Interaction</a></li>
+        <li class="toc-subsection"><a href="#cart-pushing">Cart Pushing</a></li>
+        <li class="toc-subsection"><a href="#cart-find">Find a Cart</a></li>
+        <li class="toc-subsection"><a href="#cart-pull-left">Cart Pulling (Left Hand)</a></li>
+        <li class="toc-subsection"><a href="#cart-pull-right">Cart Pulling (Right Hand)</a></li>
+      <li><a href="#skateboard-interaction">Skateboard Interaction</a></li>
+        <li class="toc-subsection"><a href="#skateboard-left">Skateboarding (Left Side)</a></li>
+        <li class="toc-subsection"><a href="#skateboard-right">Skateboarding (Right Side)</a></li>
+      <li><a href="#generalization">Generalization</a></li>
+    </ul>
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title" id="main-title"><span style="color: #ff9900;">VAIC</span>: Vision-Guided Humanoid Agile Object Interaction Control via Decoupled Commands</h1>
+
+          <!-- Authors -->
+          <div class="is-size-5 publication-authors" style="line-height: 1.6; margin-top: 10px; color: #000;">
+            <span class="author-block"><a href="https://ldt29.github.io/" target="_blank">Dongting Li</a><sup>1,3*</sup>,</span>
+            <span class="author-block"><a href="https://openreview.net/profile?id=~Qianyang_Wu1" target="_blank">Qianyang Wu</a><sup>3*</sup>,</span>
+            <span class="author-block"><a href="https://cybercal.github.io/" target="_blank">Xingyu Chen</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=seNYsXsAAAAJ&hl=en" target="_blank">Liang Li</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://openreview.net/profile?id=~Yuhang_Lin3" target="_blank">Yuhang Lin</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://openreview.net/profile?id=~Sikai_Wu1" target="_blank">Sikai Wu</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://learning-github-zgy.github.io/" target="_blank">Guoyao Zhang</a><sup>3</sup>,</span>
+          </div>
+          <div class="is-size-5 publication-authors" style="line-height: 1.8;">
+            <span class="author-block"><a href="https://ieeexplore.ieee.org/author/37085630293" target="_blank">Mingliang Zhou</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0002-0627-0194" target="_blank">Diyun Xiang</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://github.com/jonyzhang2023" target="_blank">Qiang Zhang</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://facultyprofiles.hkust-gz.edu.cn/faculty-personal-page/XU-Renjing/renjingxu" target="_blank">Renjing Xu</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://majianzhu.com/" target="_blank">Jianzhu Ma</a><sup>1†</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 12px; margin-bottom: 12px;">
+            <sup style="color: #ff9900;">*</sup>Equal Contribution &nbsp;&nbsp; <sup style="color: #ff9900;">†</sup>Corresponding author
+          </div>
+
+          <!-- Institution Names -->
+          <div class="institution-names" style="font-family: 'Google Sans', sans-serif; font-size: 1rem; color: #555; line-height: 1.6;">
+            <sup>1</sup> Tsinghua University &nbsp;&nbsp; <sup>2</sup> HKUST(Guangzhou) &nbsp;&nbsp; <sup>3</sup> Xiaomi Robotics Lab
+          </div>
+
+          <!-- Paper Links -->
+          <div class="publication-links" style="margin-top: 15px;">
+            <span class="link-block">
+              <a href="./static/vaic.pdf" class="external-link button is-normal is-rounded is-dark" style="margin: 5px;">
+                <span class="icon">
+                  <img src="./static/images/pdf.svg" alt="PDF" />
+                </span>
+                <span>PDF</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Teaser Image -->
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <img src="./static/images/teaser.png" alt="VAIC teaser" style="width: 65%; border-radius: 10px;" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="abstract">
+  <div class="container">
+    <h2 class="title is-2" id="abstract-title">Abstract</h2>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div class="content has-text-justified">
+          <p>
+            Humanoid robots hold immense potential for real-world assistance, yet agile interaction with objects in unstructured environments demands tightly coupled whole body coordination. Despite recent advancements, current controllers face a critical deployment gap. They rely heavily on dense reference trajectories and perfect state observability, which inherently limits physical generalization. We present Vision Guided Agile Interaction Control (VAIC), a unified framework that bridges this gap by operating exclusively on onboard depth, historical proprioception, and a decoupled user command interface. VAIC employs a two-stage distillation paradigm. First, a privileged teacher policy masters diverse interaction skills using precise object kinematics and exact environmental states. Second, a deployable student policy distills these capabilities by replacing full body tracking with velocity targets across multiple axes and an interaction indicator for each frame. The student utilizes a recurrent object adaptation module to implicitly infer unobservable object dynamics from raw depth streams and proprioception. Evaluations and real-world deployments on the humanoid robot demonstrate that a single VAIC policy successfully executes highly diverse dynamic tasks. These tasks include box carrying, cart interaction, and skateboarding, consistently outperforming baselines and advancing autonomous humanoid deployment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="box-interaction">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3" style="text-align: left; padding-bottom: 10px;">Box Interaction</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="box-pick-place">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Box Pick and Place</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02D_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="box-cross-slope">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Cross Slope</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_cross_slope.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_cross_slope.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="box-find">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Find a Box</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_find_box.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_find_box.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02_find_box.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02D_find_box.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cart-interaction">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3" style="text-align: left; padding-bottom: 10px;">Cart Interaction</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="cart-pushing">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Cart Pushing</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_cart_push.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_cart_push.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02_cart_push.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02D_cart_push.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="cart-find">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Find a Cart</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_find_cart.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_find_cart.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="cart-pull-left">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Cart Pulling (Left Hand)</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_cart_pull_left.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_cart_pull_left.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02_cart_pull_left.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02D_cart_pull_left.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="cart-pull-right">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Cart Pulling (Right Hand)</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/02D_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/03_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/03D_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="skateboard-interaction">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3" style="text-align: left; padding-bottom: 10px;">Skateboard Interaction</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="skateboard-left">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Skateboarding (Left Side)</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_skateboard_left.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_skateboard_left.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section subsection" id="skateboard-right">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4" style="text-align: left; padding-bottom: 0px;">Skateboarding (Right Side)</h3>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_skateboard_right.mp4"></video>
+            <div class="gallery-video-caption">RGB</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01D_skateboard_right.mp4"></video>
+            <div class="gallery-video-caption">Depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="generalization">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3" style="text-align: left; padding-bottom: 10px;">Generalization</h2>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/03_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">Box size: 30 cm x 30 cm x 45 cm</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/04_box_pickplace.mp4"></video>
+            <div class="gallery-video-caption">Box size: 40 cm x 30 cm x 35 cm</div>
+          </div>
+        </div>
+        <div class="paper-video-row two-up">
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/01_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">Cart pulling (right hand): 0 kg load</div>
+          </div>
+          <div class="paper-video-item">
+            <video class="paper-video" autoplay muted loop playsinline controls src="./static/videos/03_cart_pull_right.mp4"></video>
+            <div class="gallery-video-caption">Cart pulling (right hand): 5 kg load</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+    <footer class="footer">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>Page template borrowed from <a href="https://haic-humanoid.github.io/" target="_blank" class="dnerf">HAIC</a></p>
+        </div>
+      </div>
+    </footer>
+
+  <!-- JavaScript for TOC Scroll Behavior -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toc = document.querySelector('.toc');
+      const mainTitle = document.getElementById('main-title');
+      
+      if (toc && mainTitle) {
+        // Function to check if we should show the TOC
+        function checkTocVisibility() {
+          const titleRect = mainTitle.getBoundingClientRect();
+          
+          // Show TOC when the main title is getting close to the top (with 100px buffer)
+          if (titleRect.top <= 100) {
+            toc.classList.add('show');
+          } else {
+            toc.classList.remove('show');
+          }
+        }
+        
+        // Check on scroll
+        window.addEventListener('scroll', checkTocVisibility);
+        
+        // Check on load
+        checkTocVisibility();
+      }
+
+      // Active section highlighting in TOC
+      const tocLinks = document.querySelectorAll('.toc a');
+      const sections = [];
+      
+      // Collect all sections that have corresponding TOC links
+      tocLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const sectionId = href.substring(1);
+          const section = document.getElementById(sectionId);
+          if (section) {
+            sections.push({
+              id: sectionId,
+              element: section,
+              link: link
+            });
+          }
+        }
+      });
+
+      function updateActiveTocLink() {
+        // Get current scroll position (with offset from top)
+        const scrollPosition = window.scrollY + 150; // 150px offset to trigger earlier
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        // Find the current section
+        let currentSection = null;
+        
+        // Check if we're at the bottom of the page
+        if (window.scrollY + windowHeight >= documentHeight - 50) {
+          // If at bottom, highlight the last section
+          currentSection = sections[sections.length - 1];
+        } else {
+          // Find the section that's currently in view
+          for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            const rect = section.element.getBoundingClientRect();
+            const sectionTop = rect.top + window.scrollY;
+            const sectionBottom = sectionTop + rect.height;
+            
+            // Check if the top of viewport is within this section (with offset)
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+              currentSection = section;
+              break;
+            }
+          }
+          
+          // If no section found in viewport, use the last section that's above current position
+          if (!currentSection) {
+            for (let i = sections.length - 1; i >= 0; i--) {
+              const section = sections[i];
+              const sectionTop = section.element.getBoundingClientRect().top + window.scrollY;
+              if (sectionTop <= scrollPosition) {
+                currentSection = section;
+                break;
+              }
+            }
+          }
+        }
+
+        // Update active class on TOC links
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+        });
+
+        if (currentSection) {
+          currentSection.link.classList.add('active');
+          
+          // Also highlight parent link if this is a subsection
+          const parentLi = currentSection.link.closest('li');
+          if (parentLi && parentLi.classList.contains('toc-subsection')) {
+            // Find the previous sibling that is not a subsection (the parent section)
+            let prevSibling = parentLi.previousElementSibling;
+            while (prevSibling) {
+              if (!prevSibling.classList.contains('toc-subsection')) {
+                const parentSectionLink = prevSibling.querySelector('a');
+                if (parentSectionLink) {
+                  parentSectionLink.classList.add('active');
+                }
+                break;
+              }
+              prevSibling = prevSibling.previousElementSibling;
+            }
+          }
+        }
+      }
+
+      // Update on scroll
+      window.addEventListener('scroll', updateActiveTocLink);
+      
+      // Update on load
+      updateActiveTocLink();
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const captions = document.querySelectorAll('.gallery-video-caption');
+      captions.forEach(function(caption) {
+        const text = caption.textContent.trim();
+        if (text === 'RGB') {
+          caption.textContent = 'Exocentric RGB';
+        } else if (text === 'Depth') {
+          caption.textContent = 'Egocentric Depth';
+        }
+      });
+    });
+  </script>
+
+
+</body>
+
+</html>
